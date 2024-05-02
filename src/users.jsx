@@ -1,6 +1,33 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import faker from 'faker';
-import {CSVLink} from 'react-csv';
+import { CSVLink } from 'react-csv';
+
+// Move generateData function outside the component
+const generateData = (region, seed, pageNumber) => {
+    const regionLocales = {
+        tr: 'tr',
+        ru: 'ru',
+        fr: 'fr',
+    };
+
+    faker.locale = regionLocales[region];
+    faker.seed(seed + pageNumber);
+
+    const data = [];
+    const pageSize = 20;
+
+    for (let i = 0; i < pageSize; i++) {
+        const id = faker.random.uuid();
+        const name = faker.name.findName();
+        const phone = faker.phone.phoneNumber();
+        let address = faker.address;
+        address = address.streetAddress() + ', ' + address.state()
+
+        data.push({ id, name, address, phone });
+    }
+
+    return data;
+};
 
 const App = () => {
     const [region, setRegion] = useState('ru');
@@ -9,38 +36,12 @@ const App = () => {
     const [userData, setUserData] = useState([]);
     const [pageNumber, setPageNumber] = useState(1);
 
-    const regionLocales = {
-        tr: 'tr',
-        ru: 'ru',
-        fr: 'fr',
-    };
-
-    const generateData = (seed, pageNumber) => {
-        faker.locale = regionLocales[region];
-        faker.seed(seed + pageNumber);
-
-        const data = [];
-        const pageSize = 20;
-
-        for (let i = 0; i < pageSize; i++) {
-            const id = faker.random.uuid();
-            const name = faker.name.findName();
-            const phone = faker.phone.phoneNumber();
-            let address = faker.address;
-            address = address.streetAddress() + ', ' + address.state()
-
-            data.push({id, name, address, phone});
-        }
-
-        return data;
-    };
-
     const applyErrors = (data, errorRate) => {
         return data.map((record, index) => {
             if (index % errorRate !== 0)
                 return record;
 
-            let modifiedRecord = {...record};
+            let modifiedRecord = { ...record };
 
             const randomIndex = Math.floor(Math.random() * Object.keys(record).length);
             const randomField = Object.keys(record)[randomIndex];
@@ -61,7 +62,7 @@ const App = () => {
                     newValue = oldValue.slice(0, addIndex) + randomChar + oldValue.slice(addIndex);
 
                     break;
-                case 2: // swapp char
+                case 2: // swap char
                     const swapIndex = Math.floor(Math.random() * (oldValue.length - 1));
 
                     newValue =
@@ -75,16 +76,16 @@ const App = () => {
                     newValue = oldValue;
             }
 
-            return {...modifiedRecord, [randomField]: newValue};
+            return { ...modifiedRecord, [randomField]: newValue };
         });
     };
 
     useEffect(() => {
-        const newData = generateData(seed, pageNumber);
+        const newData = generateData(region, seed, pageNumber);
         const modifiedData = applyErrors(newData, errorRate);
 
         setUserData(prevData => [...prevData, ...modifiedData]);
-    }, [region, errorRate, seed, pageNumber]);
+    }, [region, seed, pageNumber, errorRate]);
 
     const handleRegionChange = (e) => {
         setRegion(e.target.value);
