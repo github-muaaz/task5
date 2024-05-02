@@ -57,7 +57,8 @@ const App = () => {
                     break;
                 case 1: // add random char
                     const addIndex = Math.floor(Math.random() * oldValue.length);
-                    const randomChar = faker.random.alphaNumeric();
+                    const randomCharIndex = Math.floor(Math.random() * oldValue.length);
+                    const randomChar = oldValue.charAt(randomCharIndex);
                     newValue = oldValue.slice(0, addIndex) + randomChar + oldValue.slice(addIndex);
 
                     break;
