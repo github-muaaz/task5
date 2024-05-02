@@ -83,7 +83,7 @@ const App = () => {
         const newData = generateData(region, seed, pageNumber);
         const modifiedData = applyErrors(newData, errorRate);
 
-        setUserData(prevData => [...prevData, ...modifiedData]);
+        setUserData(modifiedData);
     }, [region, seed, pageNumber, errorRate]);
 
     const handleRegionChange = (e) => {
