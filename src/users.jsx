@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import faker from 'faker';
 import { CSVLink } from 'react-csv';
 
-// Move generateData function outside the component
 const generateData = (region, seed, pageNumber) => {
     const regionLocales = {
         tr: 'tr',
