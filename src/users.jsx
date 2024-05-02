@@ -131,7 +131,7 @@ const App = () => {
                             <input
                                 type="range"
                                 className="form-range"
-                                min="0" max="10"
+                                min="0"
                                 value={errorRate}
                                 onChange={handleErrorRateChange}
                             />
